@@ -19,7 +19,7 @@
 
     <script>
         function showAd() {
-            // ከ AdsGram ያገኙትን Block ID እዚህ ቦታ ያስገቡ
+            const AdController = window.Adsgram.init({ blockId: "46561" });
             const AdController = window.Adsgram.init({ blockId: "YOUR_BLOCK_ID" });
             AdController.show().then(() => {
                 alert("እናመሰግናለን!");
