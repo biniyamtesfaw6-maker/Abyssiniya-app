@@ -39,22 +39,22 @@
         <section id="booksSection" class="space-y-4">
             <div class="relative">
                 <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
-                <input type="text" id="searchInput" placeholder="መጽሐፍ በስም ፈልግ..." 
+                <input type="text" id="searchInput" onkeyup="filterBooks()" placeholder="መጽሐፍ በስም ፈልግ..." 
                        class="w-full pl-10 pr-4 py-2 bg-slate-800/80 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-blue-500">
             </div>
 
             <!-- Grade Filter -->
             <div class="flex space-x-2 overflow-x-auto pb-2 text-xs">
-                <button onclick="filterBooks('all')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap active-grade">ሁሉም</button>
-                <button onclick="filterBooks('9')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">9ኛ</button>
-                <button onclick="filterBooks('10')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">10ኛ</button>
-                <button onclick="filterBooks('11')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">11ኛ</button>
-                <button onclick="filterBooks('12')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">12ኛ</button>
+                <button onclick="setGradeFilter('all', this)" class="grade-btn px-4 py-2 rounded-xl bg-blue-600 text-white whitespace-nowrap">ሁሉም</button>
+                <button onclick="setGradeFilter('9', this)" class="grade-btn px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">9ኛ</button>
+                <button onclick="setGradeFilter('10', this)" class="grade-btn px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">10ኛ</button>
+                <button onclick="setGradeFilter('11', this)" class="grade-btn px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">11ኛ</button>
+                <button onclick="setGradeFilter('12', this)" class="grade-btn px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">12ኛ</button>
             </div>
 
             <!-- Books Grid -->
             <div id="booksGrid" class="grid grid-cols-2 gap-3">
-                <!-- Books will be inserted here dynamically -->
+                <!-- Sample Books -->
             </div>
         </section>
 
@@ -71,7 +71,7 @@
             </div>
 
             <!-- Chat Container -->
-            <div id="chatContainer" class="flex-1 overflow-y-auto space-y-3 p-2 mb-16 rounded-2xl bg-slate-900/40 border border-slate-800 min-h-[300px] max-h-[60vh]">
+            <div id="chatContainer" class="flex-1 overflow-y-auto space-y-3 p-2 mb-16 rounded-2xl bg-slate-900/40 border border-slate-800 min-h-[300px] max-h-[60vh] flex flex-col">
                 <div class="glass-card rounded-2xl p-3 text-slate-200 text-sm max-w-[85%] self-start border-l-4 border-l-blue-500">
                     ሰላም! እኔ Abyssinia AI የትምህርት ረዳትህ ነኝ። የፈለግከውን የትምህርት ጥያቄ፣ የቤት ሥራ፣ ወይም ማብራሪያ የሚፈልግ ርዕስ ካለህ ጻፍልኝ!
                 </div>
@@ -104,8 +104,16 @@
     <script>
         const GEMINI_API_KEY = "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";
 
-        let allBooks = [];
-        let currentGrade = 'all';
+        const sampleBooks = [
+            { title: "Mathematics Grade 9", grade: "9", icon: "fa-calculator" },
+            { title: "Physics Grade 10", grade: "10", icon: "fa-atom" },
+            { title: "Chemistry Grade 11", grade: "11", icon: "fa-flask" },
+            { title: "Biology Grade 12", grade: "12", icon: "fa-dna" },
+            { title: "English Grade 9", grade: "9", icon: "fa-language" },
+            { title: "Economics Grade 11", grade: "11", icon: "fa-chart-line" }
+        ];
+
+        let selectedGrade = 'all';
 
         const tg = window.Telegram?.WebApp;
         if (tg) {
@@ -113,7 +121,55 @@
             tg.expand();
         }
 
-        // Switch Navigation Tabs
+        function renderBooks() {
+            const grid = document.getElementById('booksGrid');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = sampleBooks.filter(book => {
+                const matchesGrade = selectedGrade === 'all' || book.grade === selectedGrade;
+                const matchesSearch = book.title.toLowerCase().includes(searchVal);
+                return matchesGrade && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="col-span-2 text-center text-xs text-slate-400 py-8">ምንም መጽሐፍ አልተገኘም።</p>`;
+                return;
+            }
+
+            filtered.forEach(book => {
+                grid.innerHTML += `
+                    <div class="glass-card p-3 rounded-2xl flex flex-col justify-between space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="p-2 rounded-xl bg-blue-600/20 text-blue-400">
+                                <i class="fas ${book.icon} text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-200 line-clamp-1">${book.title}</h3>
+                                <p class="text-[10px] text-slate-400">${book.grade}ኛ ክፍል</p>
+                            </div>
+                        </div>
+                        <button class="w-full py-1.5 bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white rounded-xl text-xs transition">
+                            ክፈት
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function setGradeFilter(grade, btn) {
+            selectedGrade = grade;
+            document.querySelectorAll('.grade-btn').forEach(b => {
+                b.className = 'grade-btn px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap';
+            });
+            btn.className = 'grade-btn px-4 py-2 rounded-xl bg-blue-600 text-white whitespace-nowrap';
+            renderBooks();
+        }
+
+        function filterBooks() {
+            renderBooks();
+        }
+
         function switchTab(tab) {
             const booksSec = document.getElementById('booksSection');
             const aiSec = document.getElementById('aiSection');
@@ -140,7 +196,6 @@
             if (e.key === 'Enter') sendAiMessage();
         }
 
-        // AI ASSISTANT LOGIC
         function sendAiMessage() {
             const input = document.getElementById('aiInput');
             const userMessage = input.value.trim();
@@ -148,7 +203,6 @@
 
             const chatContainer = document.getElementById('chatContainer');
 
-            // Add User Message
             const userDiv = document.createElement('div');
             userDiv.className = 'glass-card rounded-2xl p-3 text-slate-100 max-w-[85%] self-end bg-blue-600/40 border-r-4 border-r-blue-500 ml-auto text-sm';
             userDiv.innerText = userMessage;
@@ -157,66 +211,60 @@
             input.value = '';
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // Loading Indicator
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'glass-card rounded-2xl p-3 text-slate-300 max-w-[85%] self-start border-l-4 border-l-amber-500 text-sm';
             loadingDiv.innerText = 'እየሰበሰበ ነው... ⏳';
             chatContainer.appendChild(loadingDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // System Prompt Instructions
             const systemInstruction = "You are 'Abyssinia AI Assistant', a helpful and knowledgeable tutor designed specifically for Ethiopian high school students (Grades 9-12). Answer accurately in Amharic or English depending on the user input.";
 
-            try {
-                fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${GEMINI_API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: 'google/gemini-2.0-flash-lite-001',
-                        messages: [
-                            { role: 'system', content: systemInstruction },
-                            { role: 'user', content: userMessage }
-                        ]
-                    })
+            fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${GEMINI_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: 'google/gemini-2.0-flash-lite-001',
+                    messages: [
+                        { role: 'system', content: systemInstruction },
+                        { role: 'user', content: userMessage }
+                    ]
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (chatContainer.contains(loadingDiv)) {
-                        chatContainer.removeChild(loadingDiv);
-                    }
-
-                    if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
-                        const aiDiv = document.createElement('div');
-                        aiDiv.className = 'glass-card rounded-2xl p-3 text-slate-100 max-w-[85%] self-start border-l-4 border-l-amber-500 text-sm';
-                        aiDiv.innerText = data.choices[0].message.content;
-                        chatContainer.appendChild(aiDiv);
-                    } else {
-                        const errDiv = document.createElement('div');
-                        errDiv.className = 'glass-card rounded-2xl p-3 text-red-300 max-w-[85%] self-start border-l-4 border-l-red-500 text-sm';
-                        errDiv.innerText = 'ይቅርታ! ጥያቄውን ማስተናገድ አልተቻለም።';
-                        chatContainer.appendChild(errDiv);
-                    }
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                })
-                .catch(error => {
-                    if (chatContainer.contains(loadingDiv)) {
-                        chatContainer.removeChild(loadingDiv);
-                    }
-                    const errDiv = document.createElement('div');
-                    errDiv.className = 'glass-card rounded-2xl p-3 text-red-300 max-w-[85%] self-start border-l-4 border-l-red-500 text-sm';
-                    errDiv.innerText = 'የኔትወርክ ችግር አጋጥሟል። እባክዎ ደግመው ይሞክሩ።';
-                    chatContainer.appendChild(errDiv);
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                });
-            } catch (e) {
+            })
+            .then(response => response.json())
+            .then(data => {
                 if (chatContainer.contains(loadingDiv)) {
                     chatContainer.removeChild(loadingDiv);
                 }
-            }
+
+                if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+                    const aiDiv = document.createElement('div');
+                    aiDiv.className = 'glass-card rounded-2xl p-3 text-slate-100 max-w-[85%] self-start border-l-4 border-l-amber-500 text-sm';
+                    aiDiv.innerText = data.choices[0].message.content;
+                    chatContainer.appendChild(aiDiv);
+                } else {
+                    const errDiv = document.createElement('div');
+                    errDiv.className = 'glass-card rounded-2xl p-3 text-red-300 max-w-[85%] self-start border-l-4 border-l-red-500 text-sm';
+                    errDiv.innerText = 'ይቅርታ! ጥያቄውን ማስተናገድ አልተቻለም።';
+                    chatContainer.appendChild(errDiv);
+                }
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            })
+            .catch(error => {
+                if (chatContainer.contains(loadingDiv)) {
+                    chatContainer.removeChild(loadingDiv);
+                }
+                const errDiv = document.createElement('div');
+                errDiv.className = 'glass-card rounded-2xl p-3 text-red-300 max-w-[85%] self-start border-l-4 border-l-red-500 text-sm';
+                errDiv.innerText = 'የኔትወርክ ችግር አጋጥሟል። እባክዎ ደግመው ይሞክሩ።';
+                chatContainer.appendChild(errDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            });
         }
+
+        renderBooks();
     </script>
 </body>
 </html>
