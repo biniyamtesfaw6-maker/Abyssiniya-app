@@ -1,299 +1,223 @@
 <!DOCTYPE html>
 <html lang="am">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Abyssiniya Student Hub</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: #0f172a;
-      color: #f8fafc;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    .glass-card {
-      background: rgba(30, 41, 59, 0.75);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .active-tab {
-      background: #2563eb !important;
-      color: white !important;
-      box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
-    }
-    .active-nav {
-      color: #3b82f6 !important;
-    }
-  </style>
-</head>
-<body class="pb-20">
-
-  <!-- Header -->
-  <header class="p-4 text-center flex flex-col items-center justify-center border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-20">
-    <h1 class="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-      Abyssiniya Student Hub
-    </h1>
-    <p class="text-[11px] text-slate-400 mt-0.5">የመጻሕፍት ቤተ-መጻሕፍት እና AI የትምህርት ረዳት</p>
-  </header>
-
-  <!-- SECTION 1: BOOKS TAB -->
-  <div id="booksSection">
-    <!-- Search & Filter Section -->
-    <div class="p-4 max-w-md mx-auto">
-      <div class="relative mb-3">
-        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
-        <input type="text" id="searchInput" placeholder="መጽሐፍ በስም ፈልግ..." class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:border-blue-500 transition">
-      </div>
-
-      <div class="flex justify-between gap-1 bg-slate-800/60 p-1.5 rounded-xl text-xs font-semibold">
-        <button onclick="filterGrade('all', event)" class="tab-btn active-tab flex-1 py-2 rounded-lg transition">ሁሉም</button>
-        <button onclick="filterGrade('9', event)" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">9ኛ</button>
-        <button onclick="filterGrade('10', event)" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">10ኛ</button>
-        <button onclick="filterGrade('11', event)" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">11ኛ</button>
-        <button onclick="filterGrade('12', event)" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">12ኛ</button>
-      </div>
-    </div>
-
-    <!-- Book Grid -->
-    <main class="p-4 max-w-md mx-auto pt-0">
-      <div id="bookGrid" class="grid grid-cols-2 gap-3"></div>
-    </main>
-  </div>
-
-  <!-- SECTION 2: AI ASSISTANT TAB -->
-  <div id="aiSection" class="hidden p-4 max-w-md mx-auto">
-    <div class="glass-card rounded-2xl p-4 mb-4 flex items-center gap-3 border border-blue-500/30">
-      <div class="w-10 h-10 rounded-full bg-blue-600/20 text-blue-400 flex items-center justify-center text-lg shrink-0">
-        <i class="fa-solid fa-robot"></i>
-      </div>
-      <div>
-        <h2 class="text-sm font-bold text-slate-100">Abyssiniya AI ረዳት</h2>
-        <p class="text-[11px] text-slate-400">ማንኛውንም የትምህርት ጥያቄ (Math, Physics, Chemistry, English...) ጠይቀኝ!</p>
-      </div>
-    </div>
-
-    <!-- Chat Messages Container -->
-    <div id="chatContainer" class="space-y-3 mb-24 overflow-y-auto max-h-[58vh] p-1 flex flex-col">
-      <div class="glass-card rounded-2xl p-3 text-xs text-slate-300 max-w-[85%] self-start border-l-4 border-l-blue-500">
-        ሰላም! እኔ Abyssiniya AI የትምህርት ረዳትህ ነኝ። 
-
-የፈለግከውን የትምህርት ጥያቄ፣ የቤት ሥራ፣ ወይም ማብራሪያ የሚፈልግ ርዕስ ካለህ ጻፍልኝ!
-      </div>
-    </div>
-
-    <!-- Input Box -->
-    <div class="fixed bottom-14 left-0 right-0 p-3 bg-slate-900/95 border-t border-slate-800 backdrop-blur-md max-w-md mx-auto z-10">
-      <div class="flex gap-2">
-        <input type="text" id="aiInput" placeholder="ጥያቄህን እዚህ ጻፍ..." onkeypress="handleKeyPress(event)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
-        <button onclick="sendAiMessage()" id="sendBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center justify-center">
-          <i class="fa-solid fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-2 max-w-md mx-auto flex justify-around text-slate-400 text-xs font-medium z-30">
-    <button onclick="switchTab('books')" id="navBooks" class="flex flex-col items-center gap-1 active-nav transition">
-      <i class="fa-solid fa-book text-base"></i>
-      <span>መጻሕፍት</span>
-    </button>
-    <button onclick="switchTab('ai')" id="navAi" class="flex flex-col items-center gap-1 transition">
-      <i class="fa-solid fa-robot text-base"></i>
-      <span>AI ረዳት</span>
-    </button>
-  </nav>
-
-  <script>
-    const GEMINI_API_KEY = "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";
-    
-
-    let allBooks = [];
-    let currentGrade = 'all';
-
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-    }
-
-    // Switch Navigation Tabs
-    function switchTab(tab) {
-      const booksSec = document.getElementById('booksSection');
-      const aiSec = document.getElementById('aiSection');
-      const navBooks = document.getElementById('navBooks');
-      const navAi = document.getElementById('navAi');
-
-      if (tab === 'books') {
-        booksSec.classList.remove('hidden');
-        aiSec.classList.add('hidden');
-        navBooks.classList.add('active-nav');
-        navAi.classList.remove('active-nav');
-      } else {
-        booksSec.classList.add('hidden');
-        aiSec.classList.remove('hidden');
-        navAi.classList.add('active-nav');
-        navBooks.classList.remove('active-nav');
-      }
-    }
-
-    // Load Books
-    async function loadBooks() {
-      try {
-        const response = await fetch('./books.json');
-        if (!response.ok) throw new Error('Failed to load books');
-        allBooks = await response.json();
-        renderBooks();
-      } catch (error) {
-        document.getElementById('bookGrid').innerHTML = `<div class="col-span-2 text-center text-red-400 py-10">መጻሕፍቱን መጫን አልተቻለም!</div>`;
-      }
-    }
-
-    function renderBooks() {
-      const grid = document.getElementById('bookGrid');
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      grid.innerHTML = '';
-
-      const filteredBooks = allBooks.filter(book => {
-        const matchesGrade = currentGrade === 'all' || book.grade === currentGrade;
-        const matchesSearch = book.title.toLowerCase().includes(searchTerm);
-        return matchesGrade && matchesSearch;
-      });
-
-      if (filteredBooks.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 text-center text-slate-500 py-10">ምንም መጽሐፍ አልተገኘም</div>`;
-        return;
-      }
-
-      filteredBooks.forEach(book => {
-        const card = document.createElement('div');
-        card.className = 'glass-card rounded-2xl p-3 flex flex-col items-center justify-between text-center';
-        card.innerHTML = `
-          <div class="w-14 h-14 mb-2 flex items-center justify-center bg-slate-800 rounded-xl p-2">
-            <img src="${book.cover}" alt="${book.title}" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3389/3389081.png'">
-          </div>
-          <h3 class="text-xs font-semibold mb-1 line-clamp-2 text-slate-200">${book.title}</h3>
-          <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full mb-2">Grade ${book.grade}</span>
-          <button onclick="downloadBook('${book.downloadUrl}')" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs py-1.5 rounded-xl font-medium transition flex items-center justify-center gap-1">
-            <i class="fa-solid fa-download"></i> አውርድ
-          </button>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function downloadBook(url) {
-      if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
-      else window.open(url, '_blank');
-    }
-
-    function filterGrade(grade, event) {
-      currentGrade = grade;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab', 'text-white'));
-      event.target.classList.add('active-tab');
-      renderBooks();
-    }
-
-    document.getElementById('searchInput').addEventListener('input', renderBooks);
-
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') sendAiMessage();
-    }
-
-    // AI ASSISTANT LOGIC
-    function sendAiMessage() {
-    const input = document.getElementById('aiInput');
-    const userMessage = input.value.trim();
-    if (!userMessage) return;
-
-    if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY") {
-        alert("እባክዎን መጀመሪያ የ API Key ያስገቡ!");
-        return;
-    }
-
-    const chatContainer = document.getElementById('chatContainer');
-
-    // Add User Message
-    const userDiv = document.createElement('div');
-    userDiv.className = 'glass-card rounded-2xl p-3 text-slate-100 max-w-[85%] self-end bg-blue-600/40 border-r-4 border-r-blue-500 ml-auto';
-    userDiv.innerText = userMessage;
-    chatContainer.appendChild(userDiv);
-
-    input.value = '';
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-
-    // Loading Indicator
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'glass-card rounded-2xl p-3 text-slate-300 max-w-[85%] self-start border-l-4 border-l-amber-500';
-    loadingDiv.innerText = 'እየሰበሰበ ነው... ⏳';
-    chatContainer.appendChild(loadingDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-
-    // System Prompt Instructions
-    const systemInstruction = "You are 'Abyssinia AI Assistant', a helpful and knowledgeable tutor designed specifically for Ethiopian high school students (Grades 9-12). Answer accurately in Amharic or English depending on the user input.";
-
-    try {
-        fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${GEMINI_API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                model: 'google/gemini-2.0-flash-lite-001',
-                messages: [
-                    { role: 'system', content: systemInstruction },
-                    { role: 'user', content: userMessage }
-                ]
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (chatContainer.contains(loadingDiv)) {
-                chatContainer.removeChild(loadingDiv);
-            }
-
-            if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'glass-card rounded-2xl p-3 text-slate-100 max-w-[85%] self-start border-l-4 border-l-amber-500';
-                aiDiv.innerText = data.choices[0].message.content;
-                chatContainer.appendChild(aiDiv);
-            } else {
-                const errDiv = document.createElement('div');
-                errDiv.className = 'glass-card rounded-2xl p-3 text-red-300 max-w-[85%] self-start border-l-4 border-l-red-500';
-                errDiv.innerText = 'ይቅርታ! ጥያቄውን ማስተናገድ አልተቻለም።';
-                chatContainer.appendChild(errDiv);
-            }
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        })
-        .catch(error => {
-            if (chatContainer.contains(loadingDiv)) {
-                chatContainer.removeChild(loadingDiv);
-            }
-            const errDiv = document.createElement('div');
-            errDiv.className = 'glass-card rounded-2xl p-3 text-red-300 max-w-[85%] self-start border-l-4 border-l-red-500';
-            errDiv.innerText = 'የኔትወርክ ችግር አጋጥሟል። እባክዎ ደግመው ይሞክሩ።';
-            chatContainer.appendChild(errDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        });
-    } catch (e) {
-        if (chatContainer.contains(loadingDiv)) {
-            chatContainer.removeChild(loadingDiv);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abyssinia Student Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0b132b;
+            color: #f8fafc;
+            font-family: system-ui, -apple-system, sans-serif;
         }
-    }
-}
+        .glass-card {
+            background: rgba(28, 37, 65, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .active-nav {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden">
 
-      } catch (error) {
-        loadingDiv.className = 'glass-card rounded-2xl p-3 text-xs text-red-400 max-w-[85%] self-start border-l-4 border-l-red-500';
-        loadingDiv.innerText = "ይቅርታ! ጥያቄውን ማስተናገድ አልተቻለም። API Key ትክክል መሆኑን ያረጋግጡ።";
-      }
+    <!-- Header -->
+    <header class="p-4 text-center border-b border-slate-800 bg-slate-900/50">
+        <h1 class="text-xl font-bold text-blue-400">Abyssinia Student Hub</h1>
+        <p class="text-xs text-slate-400">የመጻሕፍት ቤተ-መጽሐፍት እና AI የትምህርት ረዳት</p>
+    </header>
 
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 pb-20">
+        
+        <!-- Books Section -->
+        <section id="booksSection" class="space-y-4">
+            <div class="relative">
+                <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
+                <input type="text" id="searchInput" placeholder="መጽሐፍ በስም ፈልግ..." 
+                       class="w-full pl-10 pr-4 py-2 bg-slate-800/80 rounded-xl border border-slate-700 text-sm focus:outline-none focus:border-blue-500">
+            </div>
 
-    loadBooks();
-  </script>
+            <!-- Grade Filter -->
+            <div class="flex space-x-2 overflow-x-auto pb-2 text-xs">
+                <button onclick="filterBooks('all')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap active-grade">ሁሉም</button>
+                <button onclick="filterBooks('9')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">9ኛ</button>
+                <button onclick="filterBooks('10')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">10ኛ</button>
+                <button onclick="filterBooks('11')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">11ኛ</button>
+                <button onclick="filterBooks('12')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 whitespace-nowrap">12ኛ</button>
+            </div>
+
+            <!-- Books Grid -->
+            <div id="booksGrid" class="grid grid-cols-2 gap-3">
+                <!-- Books will be inserted here dynamically -->
+            </div>
+        </section>
+
+        <!-- AI Assistant Section -->
+        <section id="aiSection" class="hidden h-full flex flex-col">
+            <div class="glass-card p-3 rounded-2xl mb-3 flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-600/30 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                    <i class="fas fa-robot text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-bold text-slate-100">Abyssinia AI ረዳት</h2>
+                    <p class="text-xs text-slate-400">ማንኛውንም የትምህርት ጥያቄ (Math, Physics, Chemistry, English...) ጠይቅ!</p>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div id="chatContainer" class="flex-1 overflow-y-auto space-y-3 p-2 mb-16 rounded-2xl bg-slate-900/40 border border-slate-800 min-h-[300px] max-h-[60vh]">
+                <div class="glass-card rounded-2xl p-3 text-slate-200 text-sm max-w-[85%] self-start border-l-4 border-l-blue-500">
+                    ሰላም! እኔ Abyssinia AI የትምህርት ረዳትህ ነኝ። የፈለግከውን የትምህርት ጥያቄ፣ የቤት ሥራ፣ ወይም ማብራሪያ የሚፈልግ ርዕስ ካለህ ጻፍልኝ!
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="fixed bottom-16 left-4 right-4 max-w-md mx-auto flex items-center space-x-2 bg-slate-900 border border-slate-700 p-2 rounded-2xl shadow-lg">
+                <input type="text" id="aiInput" placeholder="ጥያቄህን እዚህ ጻፍ..." onkeypress="handleKeyPress(event)"
+                       class="flex-1 bg-transparent px-3 py-1 text-sm focus:outline-none text-slate-100">
+                <button onclick="sendAiMessage()" class="bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl flex items-center justify-center transition">
+                    <i class="fas fa-paper-plane text-xs"></i>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900/90 border-t border-slate-800 p-2 flex justify-around items-center backdrop-blur-lg">
+        <button id="navBooks" onclick="switchTab('books')" class="flex flex-col items-center space-y-1 text-xs active-nav px-6 py-1.5 rounded-xl transition">
+            <i class="fas fa-book-open text-base"></i>
+            <span>መጻሕፍት</span>
+        </button>
+        <button id="navAi" onclick="switchTab('ai')" class="flex flex-col items-center space-y-1 text-xs text-slate-400 px-6 py-1.5 rounded-xl transition">
+            <i class="fas fa-robot text-base"></i>
+            <span>AI ረዳት</span>
+        </button>
+    </nav>
+
+    <script>
+        const GEMINI_API_KEY = "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";
+
+        let allBooks = [];
+        let currentGrade = 'all';
+
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        // Switch Navigation Tabs
+        function switchTab(tab) {
+            const booksSec = document.getElementById('booksSection');
+            const aiSec = document.getElementById('aiSection');
+            const navBooks = document.getElementById('navBooks');
+            const navAi = document.getElementById('navAi');
+
+            if (tab === 'books') {
+                booksSec.classList.remove('hidden');
+                aiSec.classList.add('hidden');
+                navBooks.classList.add('active-nav');
+                navAi.classList.remove('active-nav');
+                navAi.classList.add('text-slate-400');
+            } else {
+                aiSec.classList.remove('hidden');
+                booksSec.classList.add('hidden');
+                navAi.classList.add('active-nav');
+                navAi.classList.remove('text-slate-400');
+                navBooks.classList.remove('active-nav');
+                navBooks.classList.add('text-slate-400');
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendAiMessage();
+        }
+
+        // AI ASSISTANT LOGIC
+        function sendAiMessage() {
+            const input = document.getElementById('aiInput');
+            const userMessage = input.value.trim();
+            if (!userMessage) return;
+
+            const chatContainer = document.getElementById('chatContainer');
+
+            // Add User Message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'glass-card rounded-2xl p-3 text-slate-100 max-w-[85%] self-end bg-blue-600/40 border-r-4 border-r-blue-500 ml-auto text-sm';
+            userDiv.innerText = userMessage;
+            chatContainer.appendChild(userDiv);
+
+            input.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Loading Indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'glass-card rounded-2xl p-3 text-slate-300 max-w-[85%] self-start border-l-4 border-l-amber-500 text-sm';
+            loadingDiv.innerText = 'እየሰበሰበ ነው... ⏳';
+            chatContainer.appendChild(loadingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // System Prompt Instructions
+            const systemInstruction = "You are 'Abyssinia AI Assistant', a helpful and knowledgeable tutor designed specifically for Ethiopian high school students (Grades 9-12). Answer accurately in Amharic or English depending on the user input.";
+
+            try {
+                fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GEMINI_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'google/gemini-2.0-flash-lite-001',
+                        messages: [
+                            { role: 'system', content: systemInstruction },
+                            { role: 'user', content: userMessage }
+                        ]
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (chatContainer.contains(loadingDiv)) {
+                        chatContainer.removeChild(loadingDiv);
+                    }
+
+                    if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+                        const aiDiv = document.createElement('div');
+                        aiDiv.className = 'glass-card rounded-2xl p-3 text-slate-100 max-w-[85%] self-start border-l-4 border-l-amber-500 text-sm';
+                        aiDiv.innerText = data.choices[0].message.content;
+                        chatContainer.appendChild(aiDiv);
+                    } else {
+                        const errDiv = document.createElement('div');
+                        errDiv.className = 'glass-card rounded-2xl p-3 text-red-300 max-w-[85%] self-start border-l-4 border-l-red-500 text-sm';
+                        errDiv.innerText = 'ይቅርታ! ጥያቄውን ማስተናገድ አልተቻለም።';
+                        chatContainer.appendChild(errDiv);
+                    }
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                })
+                .catch(error => {
+                    if (chatContainer.contains(loadingDiv)) {
+                        chatContainer.removeChild(loadingDiv);
+                    }
+                    const errDiv = document.createElement('div');
+                    errDiv.className = 'glass-card rounded-2xl p-3 text-red-300 max-w-[85%] self-start border-l-4 border-l-red-500 text-sm';
+                    errDiv.innerText = 'የኔትወርክ ችግር አጋጥሟል። እባክዎ ደግመው ይሞክሩ።';
+                    chatContainer.appendChild(errDiv);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                });
+            } catch (e) {
+                if (chatContainer.contains(loadingDiv)) {
+                    chatContainer.removeChild(loadingDiv);
+                }
+            }
+        }
+    </script>
 </body>
 </html>
+
