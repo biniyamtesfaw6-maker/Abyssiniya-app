@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Abyssiniya Student Book</title>
+  <title>Abyssiniya Student Hub</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -14,7 +14,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     .glass-card {
-      background: rgba(30, 41, 59, 0.7);
+      background: rgba(30, 41, 59, 0.75);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -23,74 +23,137 @@
       color: white !important;
       box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
     }
+    .active-nav {
+      color: #3b82f6 !important;
+    }
   </style>
 </head>
-<body class="pb-10">
+<body class="pb-20">
 
-  <!-- Header & Logo -->
-  <header class="p-5 text-center flex flex-col items-center justify-center border-b border-slate-800">
-    <div class="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-amber-500 via-green-500 to-red-500 mb-3 shadow-lg">
-      <!-- ሎጎህ ከላይ ይታያል -->
-      <img src="https://raw.githubusercontent.com/yirga-tesfaw/digital-library/main/logo.png" alt="Logo" class="w-full h-full object-cover rounded-full bg-slate-900" id="logoImg" onerror="this.src='https://img.icons8.com/color/96/book.png'">
-    </div>
-    <h1 class="text-2xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-      Abyssiniya Student Book
+  <!-- Header -->
+  <header class="p-4 text-center flex flex-col items-center justify-center border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-20">
+    <h1 class="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+      Abyssiniya Student Hub
     </h1>
-    <p class="text-xs text-slate-400 mt-1">የ9-12ኛ ክፍል ዲጂታል መጻሕፍት ቤተ-መጻሕፍት</p>
+    <p class="text-[11px] text-slate-400 mt-0.5">የመጻሕፍት ቤተ-መጻሕፍት እና AI የትምህርት ረዳት</p>
   </header>
 
-  <!-- Search & Filter Section -->
-  <div class="p-4 max-w-md mx-auto sticky top-0 z-10 bg-slate-900/90 backdrop-blur-md">
-    <!-- Search Bar -->
-    <div class="relative mb-4">
-      <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
-      <input type="text" id="searchInput" placeholder="መጽሐፍ በስም ፈልግ..." class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:border-blue-500 transition">
+  <!-- SECTION 1: BOOKS TAB -->
+  <div id="booksSection">
+    <!-- Search & Filter Section -->
+    <div class="p-4 max-w-md mx-auto">
+      <div class="relative mb-3">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
+        <input type="text" id="searchInput" placeholder="መጽሐፍ በስም ፈልግ..." class="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm focus:outline-none focus:border-blue-500 transition">
+      </div>
+
+      <div class="flex justify-between gap-1 bg-slate-800/60 p-1.5 rounded-xl text-xs font-semibold">
+        <button onclick="filterGrade('all', event)" class="tab-btn active-tab flex-1 py-2 rounded-lg transition">ሁሉም</button>
+        <button onclick="filterGrade('9', event)" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">9ኛ</button>
+        <button onclick="filterGrade('10', event)" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">10ኛ</button>
+        <button onclick="filterGrade('11', event)" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">11ኛ</button>
+        <button onclick="filterGrade('12', event)" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">12ኛ</button>
+      </div>
     </div>
 
-    <!-- Grade Filter Tabs -->
-    <div class="flex justify-between gap-1 bg-slate-800/60 p-1.5 rounded-xl text-xs font-semibold">
-      <button onclick="filterGrade('all')" class="tab-btn active-tab flex-1 py-2 rounded-lg transition">ሁሉም</button>
-      <button onclick="filterGrade('9')" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">9ኛ</button>
-      <button onclick="filterGrade('10')" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">10ኛ</button>
-      <button onclick="filterGrade('11')" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">11ኛ</button>
-      <button onclick="filterGrade('12')" class="tab-btn flex-1 py-2 rounded-lg transition text-slate-400">12ኛ</button>
+    <!-- Book Grid -->
+    <main class="p-4 max-w-md mx-auto pt-0">
+      <div id="bookGrid" class="grid grid-cols-2 gap-3"></div>
+    </main>
+  </div>
+
+  <!-- SECTION 2: AI ASSISTANT TAB -->
+  <div id="aiSection" class="hidden p-4 max-w-md mx-auto">
+    <div class="glass-card rounded-2xl p-4 mb-4 flex items-center gap-3 border border-blue-500/30">
+      <div class="w-10 h-10 rounded-full bg-blue-600/20 text-blue-400 flex items-center justify-center text-lg shrink-0">
+        <i class="fa-solid fa-robot"></i>
+      </div>
+      <div>
+        <h2 class="text-sm font-bold text-slate-100">Abyssiniya AI ረዳት</h2>
+        <p class="text-[11px] text-slate-400">ማንኛውንም የትምህርት ጥያቄ (Math, Physics, Chemistry, English...) ጠይቀኝ!</p>
+      </div>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div id="chatContainer" class="space-y-3 mb-24 overflow-y-auto max-h-[58vh] p-1 flex flex-col">
+      <div class="glass-card rounded-2xl p-3 text-xs text-slate-300 max-w-[85%] self-start border-l-4 border-l-blue-500">
+        ሰላም! እኔ Abyssiniya AI የትምህርት ረዳትህ ነኝ። 
+
+የፈለግከውን የትምህርት ጥያቄ፣ የቤት ሥራ፣ ወይም ማብራሪያ የሚፈልግ ርዕስ ካለህ ጻፍልኝ!
+      </div>
+    </div>
+
+    <!-- Input Box -->
+    <div class="fixed bottom-14 left-0 right-0 p-3 bg-slate-900/95 border-t border-slate-800 backdrop-blur-md max-w-md mx-auto z-10">
+      <div class="flex gap-2">
+        <input type="text" id="aiInput" placeholder="ጥያቄህን እዚህ ጻፍ..." onkeypress="handleKeyPress(event)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+        <button onclick="sendAiMessage()" id="sendBtn" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center justify-center">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Book Container -->
-  <main class="p-4 max-w-md mx-auto">
-    <div id="bookGrid" class="grid grid-cols-2 gap-3">
-      <!-- Books will load dynamically here -->
-    </div>
-  </main>
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-2 max-w-md mx-auto flex justify-around text-slate-400 text-xs font-medium z-30">
+    <button onclick="switchTab('books')" id="navBooks" class="flex flex-col items-center gap-1 active-nav transition">
+      <i class="fa-solid fa-book text-base"></i>
+      <span>መጻሕፍት</span>
+    </button>
+    <button onclick="switchTab('ai')" id="navAi" class="flex flex-col items-center gap-1 transition">
+      <i class="fa-solid fa-robot text-base"></i>
+      <span>AI ረዳት</span>
+    </button>
+  </nav>
 
   <script>
+    // ⚠️ የራስህን GEMINI API KEY እዚህ አስገባ
+    const GEMINI_API_KEY = "AQ.Ab8RN6KyZb2yMC30rrc0ztrs6cPuPBz6RrYTJ0hrPrAA07Ta5w"; 
+
     let allBooks = [];
     let currentGrade = 'all';
 
-    // Initialize Telegram WebApp
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
       tg.expand();
     }
 
-    // Fetch Books Data
-    async function loadBooks() {
-      try {
-        const response = await fetch('books.json');
-        allBooks = await response.json();
-        renderBooks();
-      } catch (error) {
-        console.error('Error loading books:', error);
+    // Switch Navigation Tabs
+    function switchTab(tab) {
+      const booksSec = document.getElementById('booksSection');
+      const aiSec = document.getElementById('aiSection');
+      const navBooks = document.getElementById('navBooks');
+      const navAi = document.getElementById('navAi');
+
+      if (tab === 'books') {
+        booksSec.classList.remove('hidden');
+        aiSec.classList.add('hidden');
+        navBooks.classList.add('active-nav');
+        navAi.classList.remove('active-nav');
+      } else {
+        booksSec.classList.add('hidden');
+        aiSec.classList.remove('hidden');
+        navAi.classList.add('active-nav');
+        navBooks.classList.remove('active-nav');
       }
     }
 
-    // Render Books Function
+    // Load Books
+    async function loadBooks() {
+      try {
+        const response = await fetch('./books.json');
+        if (!response.ok) throw new Error('Failed to load books');
+        allBooks = await response.json();
+        renderBooks();
+      } catch (error) {
+        document.getElementById('bookGrid').innerHTML = `<div class="col-span-2 text-center text-red-400 py-10">መጻሕፍቱን መጫን አልተቻለም!</div>`;
+      }
+    }
+
     function renderBooks() {
       const grid = document.getElementById('bookGrid');
       const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      
       grid.innerHTML = '';
 
       const filteredBooks = allBooks.filter(book => {
@@ -106,14 +169,14 @@
 
       filteredBooks.forEach(book => {
         const card = document.createElement('div');
-        card.className = 'glass-card rounded-2xl p-3 flex flex-col items-center justify-between text-center hover:border-blue-500/50 transition';
+        card.className = 'glass-card rounded-2xl p-3 flex flex-col items-center justify-between text-center';
         card.innerHTML = `
-          <div class="w-16 h-16 mb-2 flex items-center justify-center bg-slate-800 rounded-xl p-2">
-            <img src="${book.cover}" alt="${book.title}" class="w-full h-full object-contain">
+          <div class="w-14 h-14 mb-2 flex items-center justify-center bg-slate-800 rounded-xl p-2">
+            <img src="${book.cover}" alt="${book.title}" class="w-full h-full object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3389/3389081.png'">
           </div>
           <h3 class="text-xs font-semibold mb-1 line-clamp-2 text-slate-200">${book.title}</h3>
-          <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full mb-3">Grade ${book.grade}</span>
-          <button onclick="downloadBook('${book.downloadUrl}')" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs py-2 rounded-xl font-medium shadow-md transition flex items-center justify-center gap-1">
+          <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full mb-2">Grade ${book.grade}</span>
+          <button onclick="downloadBook('${book.downloadUrl}')" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs py-1.5 rounded-xl font-medium transition flex items-center justify-center gap-1">
             <i class="fa-solid fa-download"></i> አውርድ
           </button>
         `;
@@ -121,27 +184,91 @@
       });
     }
 
-    // Download Handler (Direct Transfer)
     function downloadBook(url) {
-      if (tg && tg.openTelegramLink) {
-        tg.openTelegramLink(url);
-      } else {
-        window.open(url, '_blank');
-      }
+      if (tg && tg.openTelegramLink) tg.openTelegramLink(url);
+      else window.open(url, '_blank');
     }
 
-    // Filter Logic
-    function filterGrade(grade) {
+    function filterGrade(grade, event) {
       currentGrade = grade;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab', 'text-white'));
       event.target.classList.add('active-tab');
       renderBooks();
     }
 
-    // Search Listener
     document.getElementById('searchInput').addEventListener('input', renderBooks);
 
-    // Initial Load
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') sendAiMessage();
+    }
+
+    // AI ASSISTANT LOGIC
+    async function sendAiMessage() {
+      const input = document.getElementById('aiInput');
+      const userMessage = input.value.trim();
+      if (!userMessage) return;
+
+      if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY") {
+        alert("እባክዎን መጀመሪያ የ Gemini API Key አስገባ!");
+        return;
+      }
+
+      const chatContainer = document.getElementById('chatContainer');
+
+      // Add User Message
+      const userDiv = document.createElement('div');
+      userDiv.className = 'glass-card rounded-2xl p-3 text-xs text-white max-w-[85%] ml-auto bg-blue-600/40 border-r-4 border-r-blue-400 break-words';
+      userDiv.innerText = userMessage;
+      chatContainer.appendChild(userDiv);
+
+      input.value = '';
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // Loading Indicator
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'glass-card rounded-2xl p-3 text-xs text-slate-400 max-w-[85%] self-start border-l-4 border-l-amber-500';
+      loadingDiv.innerText = 'እየተሰላ ነው... ⏳';
+      chatContainer.appendChild(loadingDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      // System Prompt Instructions
+      const systemInstruction = "You are 'Abyssiniya AI', an expert educational tutor designed specifically for Ethiopian high school students (Grades 9-12). Answer all educational questions clearly, step-by-step, and accurately. Reply in Amharic by default, but if the user asks in English or specifically requests answers in English, answer in English. Be encouraging and helpful.";
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [
+                  { text: `${systemInstruction}\n\nStudent Question: ${userMessage}` }
+                ]
+              }
+            ]
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error.message || "API Error");
+        }
+
+        const aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "ይቅርታ፣ ለጥያቄህ መልስ መስጠት አልቻልኩም። እባክዎን ደግመው ይሞክሩ።";
+
+        loadingDiv.className = 'glass-card rounded-2xl p-3 text-xs text-slate-200 max-w-[85%] self-start border-l-4 border-l-emerald-500 break-words whitespace-pre-wrap';
+        loadingDiv.innerText = aiReply;
+
+      } catch (error) {
+        loadingDiv.className = 'glass-card rounded-2xl p-3 text-xs text-red-400 max-w-[85%] self-start border-l-4 border-l-red-500';
+        loadingDiv.innerText = "ይቅርታ! ጥያቄውን ማስተናገድ አልተቻለም። API Key ትክክል መሆኑን ያረጋግጡ።";
+      }
+
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
     loadBooks();
   </script>
 </body>
