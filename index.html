@@ -54,7 +54,7 @@
 
             <!-- Books Grid -->
             <div id="booksGrid" class="grid grid-cols-2 gap-3">
-                <!-- Sample Books -->
+                <!-- Books will be populated by JS -->
             </div>
         </section>
 
@@ -104,6 +104,7 @@
     <script>
         const GEMINI_API_KEY = "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";
 
+        // የመጻሕፍት ዝርዝር - እዚህ ላይ ተጨማሪ መጻሕፍት መጨመር ትችላለህ
         const sampleBooks = [
             { title: "Mathematics Grade 9", grade: "9", icon: "fa-calculator" },
             { title: "Physics Grade 10", grade: "10", icon: "fa-atom" },
@@ -121,6 +122,7 @@
             tg.expand();
         }
 
+        // መጻሕፍቱን Render ማድረጊያ
         function renderBooks() {
             const grid = document.getElementById('booksGrid');
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -170,6 +172,7 @@
             renderBooks();
         }
 
+        // የገጽ መለወጫ Function
         function switchTab(tab) {
             const booksSec = document.getElementById('booksSection');
             const aiSec = document.getElementById('aiSection');
@@ -196,6 +199,7 @@
             if (e.key === 'Enter') sendAiMessage();
         }
 
+        // OpenRouter AI ጥሪ Function
         function sendAiMessage() {
             const input = document.getElementById('aiInput');
             const userMessage = input.value.trim();
@@ -264,7 +268,10 @@
             });
         }
 
-        renderBooks();
+        // የመጀመሪያ ገጽ ሲከፈት መጻሕፍቱን እንዲያሳይ ማድረግ
+        window.onload = function() {
+            renderBooks();
+        };
     </script>
 </body>
 </html>
