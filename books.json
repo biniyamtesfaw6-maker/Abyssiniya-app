@@ -42,5 +42,16 @@
   {"id": 38, "title": "Grade 12 IT", "grade": "12", "cover": "https://img.icons8.com/color/96/laptop.png", "downloadUrl": "https://t.me/abyssiniya_student/197"},
   {"id": 39, "title": "Grade 12 Mathematics", "grade": "12", "cover": "https://img.icons8.com/color/96/calculator.png", "downloadUrl": "https://t.me/abyssiniya_student/198"},
   {"id": 40, "title": "Grade 12 Physics", "grade": "12", "cover": "https://img.icons8.com/color/96/physics.png", "downloadUrl": "https://t.me/abyssiniya_student/199"}
+  ,
+  {"id": 41, "title": "Grade 8 Amharic Student Textbook", "grade": "8", "cover": "https://img.icons8.com/color/96/book.png", "downloadUrl": "https://t.me/abyssiniya_student/203"},
+  {"id": 42, "title": "Grade 8 Career & Technical Education", "grade": "8", "cover": "https://img.icons8.com/color/96/briefcase.png", "downloadUrl": "https://t.me/abyssiniya_student/204"},
+  {"id": 43, "title": "Grade 8 Citizenship Education", "grade": "8", "cover": "https://img.icons8.com/color/96/scales.png", "downloadUrl": "https://t.me/abyssiniya_student/205"},
+  {"id": 44, "title": "Grade 8 English Student Textbook", "grade": "8", "cover": "https://img.icons8.com/color/96/abc.png", "downloadUrl": "https://t.me/abyssiniya_student/206"},
+  {"id": 45, "title": "Grade 8 General Science", "grade": "8", "cover": "https://img.icons8.com/color/96/test-tube.png", "downloadUrl": "https://t.me/abyssiniya_student/207"},
+  {"id": 46, "title": "Grade 8 Health and Physical Education", "grade": "8", "cover": "https://img.icons8.com/color/96/dumbbell.png", "downloadUrl": "https://t.me/abyssiniya_student/208"},
+  {"id": 47, "title": "Grade 8 Information Technology (IT)", "grade": "8", "cover": "https://img.icons8.com/color/96/laptop.png", "downloadUrl": "https://t.me/abyssiniya_student/209"},
+  {"id": 48, "title": "Grade 8 Mathematics Student Textbook", "grade": "8", "cover": "https://img.icons8.com/color/96/calculator.png", "downloadUrl": "https://t.me/abyssiniya_student/210"},
+  {"id": 49, "title": "Grade 8 Performing & Visual Arts (PVA)", "grade": "8", "cover": "https://img.icons8.com/color/96/paint-palette.png", "downloadUrl": "https://t.me/abyssiniya_student/211"},
+  {"id": 50, "title": "Grade 8 Social Studies Student Textbook", "grade": "8", "cover": "https://img.icons8.com/color/96/earth-planet.png", "downloadUrl": "https://t.me/abyssiniya_student/212"}
 ]
 
